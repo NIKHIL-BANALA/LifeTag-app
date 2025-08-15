@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}LifeTag User{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full flex flex-col bg-white">
+
+<nav class="bg-gradient-to-r from-teal-600 to-blue-600 shadow-lg">
+    <div class="flex justify-between items-center h-16 w-full px-4">
+
+        <!-- Left Section: Logo + Dashboard -->
+        <div class="flex items-center space-x-6">
+            <!-- Logo -->
+            <a href="/user/dashboard" class="text-2xl font-bold text-white flex-shrink-0">
+                Life<span class="text-blue-200">Tag</span>
+            </a>
+
+            <!-- Dashboard Link -->
+            <a href="/user/dashboard" class="text-white font-medium hover:text-blue-200 transition">
+                Dashboard
+            </a>
+        </div>
+
+        <!-- Right Section: Profile + Logout -->
+        <div class="flex items-center space-x-8">
+            <!-- Profile Info (Static) -->
+            <div class="flex items-center space-x-2 text-white">
+                <svg class="h-8 w-8 rounded-full bg-white/20 p-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="font-semibold">{{user.full_name}}</span>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="relative">
+                <button id="logout-btn" class="bg-rose-400 hover:bg-rose-500 px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-lg focus:outline-none">
+                    Logout
+                </button>
+
+                <!-- Logout Confirmation Dropdown -->
+                <div id="logout-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                    <div class="p-4 border-b">
+                        <div class="flex items-center space-x-3">
+                            <svg class="h-10 w-10 rounded-full bg-gray-200 p-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <div>
+                                <p class="font-semibold">{{user.full_name}}</p>
+                                <p class="text-sm text-gray-500">User</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-sm text-gray-700 mb-3">Are you sure you want to log out?</p>
+                        <a href="/user/logout" class="block w-full text-center bg-rose-400 hover:bg-rose-500 text-white py-2 rounded-lg text-sm font-semibold">
+                            Confirm Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-1">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid md:grid-cols-4 gap-8">
+        <div class="md:col-span-2">
+            <h4 class="text-2xl font-bold">Life<span class="text-teal-400">Tag</span></h4>
+            <p class="text-gray-300 mt-4">Quick, secure access to your emergency medical info.</p>
+        </div>
+        <div>
+            <h5 class="font-semibold mb-4">Quick Links</h5>
+            <ul class="space-y-2">
+                <li><a href="/" class="footer-link">Home</a></li>
+                <li><a href="/about" class="footer-link">About</a></li>
+                <li><a href="#" class="footer-link">Privacy Policy</a></li>
+            </ul>
+        </div>
+        <div>
+            <h5 class="font-semibold mb-4">Support</h5>
+            <ul class="space-y-2">
+                <li><a href="#" class="footer-link">Contact</a></li>
+                <li><a href="#" class="footer-link">Help Center</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="border-t border-gray-700 py-4 text-center text-gray-300">
+        © 2025 LifeTag. All rights reserved.
+    </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutDropdown = document.getElementById('logout-dropdown');
+
+    logoutBtn.addEventListener('click', () => {
+      logoutDropdown.classList.toggle('hidden');
+    });
+
+    // Optional: close dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+      if (!logoutBtn.contains(e.target) && !logoutDropdown.contains(e.target)) {
+        logoutDropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>
+
+<style>
+    .footer-link { 
+        color: #D1D5DB;
+    }
+    .footer-link:hover { 
+        color: #2DD4BF;
+    }
+</style>
+
+</body>
+</html>

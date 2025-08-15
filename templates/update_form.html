@@ -1,0 +1,186 @@
+{% extends "base_diagnostic.html" %}
+{% block title %}Update Medical Details — LifeTag Diagnostic{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4">
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+      <h1 class="text-3xl font-bold text-white">Update Medical Details</h1>
+      <p class="text-indigo-100 mt-1 text-sm">Editing profile for: </p>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="bg-gray-50 border-b border-gray-200 p-6 flex items-center gap-6">
+      <div class="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center border-4 border-indigo-100">
+        <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800">{{ user_data.full_name }}</h2>
+        <p class="text-gray-500 text-sm">Aadhaar: <span class="font-mono">{{ user_data.aadhaar_number }}</span></p>
+        <p class="text-gray-500 text-sm">Email: <span class="font-mono">{{ user_data.email }}</span></p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" action="/diagnostic/update_form" class="p-8 grid grid-cols-1 gap-6">
+
+      <!-- Blood Group -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+        <select name="blood_group" required class="themed-input">
+          <option value="">Select</option>
+          {% for bg in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+          <option value="{{ bg }}" {% if user_data.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Allergies -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
+        <textarea name="allergies" rows="3" placeholder="List any known allergies..." class="themed-input">{{ user_data.allergies or '' }}</textarea>
+      </div>
+
+      <!-- Chronic Conditions -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Chronic Conditions</label>
+        <div id="chronic-container" class="tag-input themed-border">
+          <div class="tags flex flex-wrap gap-2"></div>
+          <input type="text" id="chronic-input" placeholder="Type and press Enter..." class="flex-1 min-w-[150px] px-2 py-2 outline-none bg-transparent">
+        </div>
+        <input type="hidden" name="chronic_conditions" id="chronic-hidden"
+          value="{{ (user_data.chronic_conditions | replace(', ', ',') if user_data.chronic_conditions else '') }}">
+      </div>
+
+      <!-- Disabilities -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Disabilities</label>
+        <div id="disabilities-container" class="tag-input themed-border">
+          <div class="tags flex flex-wrap gap-2"></div>
+          <input type="text" id="disabilities-input" placeholder="Type and press Enter..." class="flex-1 min-w-[150px] px-2 py-2 outline-none bg-transparent">
+        </div>
+        <input type="hidden" name="disabilities" id="disabilities-hidden"
+          value="{{ (user_data.disabilities | replace(', ', ',') if user_data.disabilities else '') }}">
+      </div>
+
+      <!-- Emergency Note -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Note</label>
+        <textarea name="emergency_note" rows="3" placeholder="Special instructions for emergencies..." class="themed-input">{{ user_data.emergency_note or '' }}</textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-end">
+        <button type="submit"
+          class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 transition transform hover:-translate-y-0.5">
+          Save Medical Details
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<style>
+  .themed-input {
+    width: 100%;
+    border: 2px solid #e0e7ff;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s;
+  }
+  .themed-input:focus { border-color: #6366f1; outline: none; }
+
+  .themed-border {
+    border: 2px solid #e0e7ff;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    transition: border-color 0.3s;
+  }
+  .themed-border:focus-within { border-color: #6366f1; }
+
+  .tag {
+    display: flex;
+    align-items: center;
+    background-color: #e0e7ff;
+    color: #3730a3;
+    padding: 0.3rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+  }
+  .tag button {
+    background: none;
+    border: none;
+    margin-left: 0.4rem;
+    cursor: pointer;
+    color: #4f46e5;
+    font-weight: bold;
+  }
+</style>
+
+<!-- Updated script in update_form.html -->
+<script>
+function tagInput(containerId, inputId, hiddenId, initialTags) {
+  const container = document.getElementById(containerId);
+  const input = document.getElementById(inputId);
+  const hidden = document.getElementById(hiddenId);
+  const tagsDiv = container.querySelector(".tags");
+  // Create an initial array from the comma-separated TEXT from DB.
+  const initialArray = initialTags ? initialTags.split(",").map(t => t.trim()).filter(Boolean) : [];
+  let tags = []; // Start with an empty array for current tags.
+
+  function updateHidden() {
+    hidden.value = tags.join(",");
+  }
+
+  function addTag(text) {
+    if (text && !tags.includes(text)) {
+      tags.push(text);
+      const tagEl = document.createElement("span");
+      tagEl.className = "tag";
+      tagEl.innerHTML = `${text} <button type="button">&times;</button>`;
+      tagEl.querySelector("button").addEventListener("click", () => {
+        tags = tags.filter(t => t !== text);
+        tagEl.remove();
+        updateHidden();
+      });
+      tagsDiv.appendChild(tagEl);
+      updateHidden();
+    }
+  }
+
+  // Add each tag from the stored data.
+  initialArray.forEach(tag => addTag(tag));
+
+  // When the user types Enter, add a new tag.
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag(input.value.trim());
+      input.value = "";
+    }
+  });
+}
+
+// Initialize tag inputs with existing data (assuming TEXT from DB has comma-separated tags without spaces)
+document.addEventListener('DOMContentLoaded', function() {
+  tagInput(
+    "chronic-container",
+    "chronic-input",
+    "chronic-hidden",
+    "{{ user_data.chronic_conditions | escapejs }}"
+  );
+  tagInput(
+    "disabilities-container",
+    "disabilities-input",
+    "disabilities-hidden",
+    "{{ user_data.disabilities | escapejs }}"
+  );
+});
+</script>
+{% endblock %}

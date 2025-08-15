@@ -1,0 +1,64 @@
+{% extends "base_public.html" %}
+{% block content %}
+
+<section class="bg-gray-50 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Heading -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">
+                Sign Up for <span class="text-teal-600">Life</span><span class="text-blue-600">Tag</span>
+            </h1>
+            <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
+                Choose your role to create your account and access LifeTag services.
+            </p>
+        </div>
+
+        <!-- Signup Options Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- User Signup Card -->
+            <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-teal-100 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M5.121 17.804A8.966 8.966 0 0112 15c2.389 0 4.578.936 6.121 2.464M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900">User Signup</h2>
+                    <p class="mt-3 text-gray-600">
+                        Create your personal LifeTag account to securely store and share your medical information in emergencies.
+                    </p>
+                    <a href="/user/signup" 
+                        class="mt-6 inline-block w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold shadow-md hover:shadow-lg transition">
+                        Signup as User
+                    </a>
+                </div>
+            </div>
+
+            <!-- Diagnostic Centre Signup Card -->
+            <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M8 17v-2a4 4 0 014-4h8a4 4 0 014 4v2m-6 4h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6m-4-8v4m0 0v4m0-4h4m-4 0H8" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900">Diagnostic Centre Signup</h2>
+                    <p class="mt-3 text-gray-600">
+                        Register your diagnostic centre to manage and update patient test results securely.
+                    </p>
+                    <a href="/diagnostic/signup" 
+                        class="mt-6 inline-block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold shadow-md hover:shadow-lg transition">
+                        Signup for Diagnostic centre
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base_diagnostic.html" %}
+{% block title %}Diagnostic History — LifeTag{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- Page Header -->
+        <h1 class="text-4xl font-extrabold text-center text-indigo-800 mb-8 drop-shadow-sm">
+            Diagnostic History
+        </h1>
+
+        {% if logs and logs|length > 0 %}
+            <div class="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
+                <table class="w-full table-auto border-collapse">
+                    <thead class="bg-indigo-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-indigo-800">Updated</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-indigo-800">Aadhaar</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-indigo-800">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr class="hover:bg-indigo-50 transition-colors">
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ log.updated_at.strftime("%d %b %Y, %I:%M %p") }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ log.aadhaar[:4] }}-XXXX-XXXX
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">
+                                {% set email_parts = log.email.split('@') %}
+                                {{ email_parts[0][:2] ~ '***@' ~ email_parts[1] }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-20">
+                <p class="text-lg text-gray-600">No history records found.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

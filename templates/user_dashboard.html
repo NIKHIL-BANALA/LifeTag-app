@@ -1,0 +1,663 @@
+{% extends "base_user.html" %}
+{% block title %}Dashboard — LifeTag{% endblock %}
+
+{% block content %}
+<!-- Toast container -->
+<div id="toast" class="fixed top-4 right-4 max-w-xs w-full z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+  <div id="toast-message" class="bg-gray-900 text-white px-4 py-3 rounded shadow-lg flex items-center space-x-3">
+    <!-- green or red icon -->
+    <svg id="toast-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <span id="toast-text" class="text-sm"></span>
+  </div>
+</div>
+
+<main class="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 p-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">
+          Welcome back,
+          <span class="text-teal-600">{{ user.full_name }}</span>
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Your LifeTag profile — quick, secure access to your emergency info.</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Account</p>
+          <p class="font-mono font-semibold text-gray-800">{{ user.aadhaar_number }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center shadow-md">
+          <span class="text-white font-semibold">{{ (user.full_name or 'U')[:1] }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left (2 columns on lg) -->
+      <section class="lg:col-span-2 space-y-6">
+
+        <!-- Personal Details -->
+        <article id="section-personal" class="editable-section bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transition transform hover:-translate-y-0.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-xl font-extrabold text-gray-900">
+                <span class="text-teal-600">Personal</span> <span class="text-blue-600">Details</span>
+              </h2>
+              <p class="text-sm text-gray-500 mt-1">Contact and address fields can be updated.</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <!-- edit icon + button -->
+              <button class="edit-btn flex items-center gap-2 px-3 py-2 rounded-md bg-teal-50 text-teal-700 border border-teal-100 hover:bg-teal-100 transition text-sm"
+                      data-section="personal" type="button" aria-expanded="false">
+                <!-- pencil icon -->
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M4 13.5V20h6.5L21 9.5l-6.5-6.5L4 13.5z"/>
+                </svg>
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <!-- success/error place -->
+         
+          <form id="personal-form" action="/user/update_personal" method="POST" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Name (readonly display) -->
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Full name</label>
+              <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <div>
+                  <div class="text-gray-900 font-medium">{{ user.full_name }}</div>
+                  <div class="text-xs text-gray-500 font-mono">{{ user.aadhaar_number }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Mobile number</label>
+              <input name="mobile" id="personal-mobile" value="{{ user.phone_number or '' }}" pattern="[0-9]{10}"
+                     class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+                     disabled>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+              <input name="email" id="personal-email" value="{{ user.email or '' }}" type="email"
+                     class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+                     disabled>
+            </div>
+
+            <!-- Address full-width -->
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Address</label>
+              <textarea name="address" id="personal-address" rows="2"
+                        class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+                        disabled>{{ user.address or '' }}</textarea>
+            </div>
+
+            <!-- Save / Cancel controls -->
+            <div class="md:col-span-2 flex justify-end gap-3 mt-1">
+              <a href = '/user/dashboard'>
+              <button id="personal-cancel" type="button" class="hidden px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white hover:bg-gray-50 transition">Cancel</button>
+              </a>
+              <button id="personal-save" type="submit" class="hidden px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white text-sm font-semibold hover:from-teal-600 hover:to-blue-600 transition">Save changes</button>
+            </div>
+          </form>
+        </article>
+
+      <!-- Emergency Contact -->
+<article id="section-emergency" class="editable-section bg-white rounded-2xl shadow-lg border border-gray-100 p-6 transition transform hover:-translate-y-0.5">
+  <div class="flex items-start justify-between">
+    <div>
+      <h2 class="text-xl font-extrabold text-gray-900">
+        <span class="text-teal-600">Emergency</span> <span class="text-blue-600">Contact</span>
+      </h2>
+      <p class="text-sm text-gray-500 mt-1">Who should be contacted in case of emergency.</p>
+    </div>
+
+    <div>
+      <button class="edit-btn flex items-center gap-2 px-3 py-2 rounded-md bg-teal-50 text-teal-700 border border-teal-100 hover:bg-teal-100 transition text-sm"
+              data-section="emergency" type="button" aria-expanded="false">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M4 13.5V20h6.5L21 9.5l-6.5-6.5L4 13.5z"/>
+        </svg>
+        Edit
+      </button>
+    </div>
+  </div>
+
+  {% if emergency_success %}
+    <div class="mt-4 text-sm text-green-700 bg-green-50 p-3 rounded">{{ emergency_success }}</div>
+  {% elif emergency_error %}
+    <div class="mt-4 text-sm text-red-700 bg-red-50 p-3 rounded">{{ emergency_error }}</div>
+  {% endif %}
+
+  <form id="emergency-form" action="/user/update_emergency" method="POST" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Contact name</label>
+      <input name="emergency_name" id="emergency-name" value="{{ user.emergency_contact_name or '' }}"
+             class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+             disabled>
+    </div>
+
+    <div>
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Contact number</label>
+      <input name="emergency_number" id="emergency-number" value="{{ user.emergency_contact_number or '' }}" pattern="[0-9]{10}"
+             class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+             disabled>
+    </div>
+
+    <!-- Relation - Full Width -->
+    <div class="md:col-span-2">
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Relation</label>
+      <input name="emergency_relation" id="emergency-relation" value="{{ user.emergency_contact_relation or '' }}"
+             class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+             disabled>
+    </div>
+
+    <!-- Address - Full Width -->
+    <div class="md:col-span-2">
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Address</label>
+      <textarea name="emergency_address" id="emergency-address" rows="2"
+                class="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-200 disabled:opacity-70"
+                disabled>{{ user.emergency_contact_address or '' }}</textarea>
+    </div>
+
+    <div class="md:col-span-2 flex justify-end gap-3 mt-1">
+      <a href = '/user/dashboard'>
+        <button id="emergency-cancel" type="button" class="hidden px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white hover:bg-gray-50 transition">Cancel</button>
+      </a>
+        <button id="emergency-save" type="submit" class="hidden px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white text-sm font-semibold hover:from-teal-600 hover:to-blue-600 transition">Save changes</button>
+    </div>
+  </form>
+</article>
+
+      </section>
+
+      <!-- Right column -->
+      <aside class="space-y-6">
+
+
+      <!-- Action Buttons -->
+<div class="flex items-center gap-4 mt-6 mb-4">
+  <!-- View Profile History -->
+  <button 
+    id="view-history-btn"
+    class="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold hover:from-teal-600 hover:to-blue-600 transition shadow-md"
+  >
+    View Profile History
+  </button>
+
+  <!-- Book Appointment (same gradient now) -->
+  <button 
+    id="book-appointment-btn"
+    class="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold hover:from-teal-600 hover:to-blue-600 transition shadow-md"
+  >
+    Book Appointment
+  </button>
+</div>
+
+<!-- Floating Window: History -->
+<div id="history-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6">
+    <h2 class="text-lg font-bold mb-4">
+      <span class="text-teal-500">Profile</span> <span class="text-blue-500">History</span>
+    </h2>
+    <div id="history-content" class="text-sm text-gray-600 space-y-2">
+      <p>Loading history...</p>
+    </div>
+    <div class="flex justify-end mt-4">
+      <button id="history-close" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Window: Appointment -->
+<div id="appointment-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6">
+    <h2 class="text-lg font-bold mb-4">
+      <span class="text-teal-500">Book</span> <span class="text-blue-500">Appointment</span>
+    </h2>
+    <form id="appointment-form" class="space-y-4">
+      <input type="date" name="date" class="w-full border border-gray-300 rounded-lg p-2" required>
+      <input type="time" name="time" class="w-full border border-gray-300 rounded-lg p-2" required>
+      <textarea name="reason" placeholder="Reason for appointment" class="w-full border border-gray-300 rounded-lg p-2" required></textarea>
+      <div class="flex justify-end gap-2">
+        <button type="button" id="appointment-cancel" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">Book</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+        <!-- Medical Info (highlighted, read-only) -->
+<div id="section-medical" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 ring-1 ring-blue-50 hover:shadow-2xl transition">
+  <div class="flex items-start justify-between">
+    <div>
+      <h2 class="text-lg font-extrabold text-gray-900">
+        <span class="text-teal-600">Medical</span> <span class="text-blue-600">Info</span>
+      </h2>
+      <p class="text-sm text-gray-500 mt-1">Read-only; updated by authorised diagnostic centres.</p>
+    </div>
+    <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium border border-blue-100">Verified</div>
+  </div>
+
+  <div class="mt-4 space-y-3 text-sm text-gray-700">
+
+    <div class="flex justify-between border-b border-gray-100 pb-2 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Blood group icon: droplet -->
+        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a6 6 0 006-6c0-3.5-6-11-6-11S4 8.5 4 12a6 6 0 006 6z" clip-rule="evenodd" />
+        </svg>
+        <span class="text-gray-500">Blood group</span>
+      </div>
+      <span class="font-medium">{{ user.blood_group or 'Not provided' }}</span>
+    </div>
+
+    <div class="flex justify-between border-b border-gray-100 pb-2 pt-2 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Allergies icon: exclamation triangle -->
+        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+        <span class="text-gray-500">Allergies</span>
+      </div>
+      <span class="font-medium">{{ user.allergies or 'None listed' }}</span>
+    </div>
+
+    <div class="flex justify-between border-b border-gray-100 pb-2 pt-2 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Chronic conditions icon: heartbeat -->
+        <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 12h3l3 8 4-16 3 8h4" />
+        </svg>
+        <span class="text-gray-500">Chronic conditions</span>
+      </div>
+      <span class="font-medium">{{ user.chronic_conditions or 'None listed' }}</span>
+    </div>
+
+    <div class="flex justify-between border-b border-gray-100 pb-2 pt-2 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Vital condition info icon: alert circle -->
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <circle cx="12" cy="16" r="1" />
+        </svg>
+        <span class="text-gray-500">Vital condition info</span>
+      </div>
+      <span class="font-medium">{{ user.emergency_note or 'None listed' }}</span>
+    </div>
+
+    <div class="flex justify-between pt-2 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Disabilities icon: wheelchair -->
+        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M10 14l2-2 2 2m-2-6v4m2 4a2 2 0 100-4 2 2 0 000 4z" />
+        </svg>
+        <span class="text-gray-500">Disabilities</span>
+      </div>
+      <span class="font-medium">{{ user.disabilities or 'None' }}</span>
+    </div>
+
+    <div class="flex justify-between pt-3 items-center">
+      <div class="flex items-center gap-2">
+        <!-- Last medical update icon: calendar -->
+        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+        <span class="text-gray-500">Last medical update</span>
+      </div>
+      <span class="font-medium">{{ user.last_medical_update or '—' }}</span>
+    </div>
+
+  </div>
+</div>
+
+
+     <!-- QR Section (highlighted + buttons) -->
+<div id="section-qr" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 flex flex-col items-center ring-1 ring-teal-50 hover:shadow-2xl transition">
+  <div class="w-full flex items-start justify-between">
+    <div>
+      <h2 class="text-lg font-extrabold text-gray-900">
+        <span class="text-teal-600">LifeTag</span> <span class="text-blue-600">QR</span>
+      </h2>
+      <p class="text-sm text-gray-500 mt-1">Share with responders for fast access to your emergency details.</p>
+    </div>
+    <div class="text-sm text-gray-500">Secure</div>
+  </div>
+
+  <div class="mt-4 w-full flex flex-col items-center gap-4 ">
+    <div class="w-48 h-48 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden shadow-inner">
+      <img id="lifetag-qr" 
+           src="{{ url_for('user_bp.generate_qr') }}" 
+           alt="LifeTag QR" 
+           class="w-full h-full object-contain">
+    </div>
+
+    <div class="w-full flex items-center gap-3">
+      <!-- Refresh QR -->
+      <button onclick="document.getElementById('lifetag-qr').src='{{ url_for('user_bp.generate_qr') }}?'+new Date().getTime()" 
+              class="flex-1 w-full px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold hover:from-teal-600 hover:to-blue-600 transition flex items-center justify-center gap-2">
+        <!-- refresh/generate icon -->
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12a8 8 0 10-15.5 3.5L3 20l4.5-1.5A8 8 0 0020 12z"/>
+        </svg>
+        Generate / Refresh QR
+      </button>
+
+      <!-- Download QR -->
+      <a href="{{ url_for('user_bp.generate_qr') }}" download="LifeTag_QR.png"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+        <!-- download icon -->
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v10m0 0l-4-4m4 4l4-4M4 21h16"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-1">QR contains only emergency contact & essential non-sensitive medical info (encrypted).</p>
+  </div>
+</div>
+
+
+
+
+  <!-- Help floating button -->
+  <button id="help-btn" title="Need help?" class="fixed right-6 bottom-6 bg-gradient-to-br from-teal-500 to-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:scale-105 transition-all">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 18h.01M12 14a4 4 0 10-4-4"/>
+    </svg>
+  </button>
+</main>
+
+<!-- JS: single-section edit locking + UX -->
+<script>
+  (function () {
+    // helpers
+    const allEditableSections = document.querySelectorAll('.editable-section');
+
+    const openSection = (sectionId) => {
+      // close other sections first
+      document.querySelectorAll('.editable-section').forEach(section => {
+        if (section.id !== 'section-' + sectionId) {
+          section.classList.remove('editing');
+          // hide save/cancel & disable inputs
+          section.querySelectorAll('input, textarea').forEach(f => f.disabled = true);
+          const save = section.querySelector('[id$="-save"]');
+          const cancel = section.querySelector('[id$="-cancel"]');
+          if (save) save.classList.add('hidden');
+          if (cancel) cancel.classList.add('hidden');
+          // reset edit button aria-expanded & text + remove green dot
+          const btn = section.querySelector('.edit-btn');
+          if (btn) {
+            btn.setAttribute('aria-expanded','false');
+            btn.innerHTML = btn.getAttribute('data-original-text');
+          }
+        }
+      });
+
+      // enable current
+      const sectionEl = document.getElementById('section-' + sectionId);
+      if (!sectionEl) return;
+      sectionEl.classList.add('editing');
+
+      sectionEl.querySelectorAll('input, textarea').forEach(f => f.disabled = false);
+      const saveBtn = sectionEl.querySelector('#' + sectionId + '-save');
+      const cancelBtn = sectionEl.querySelector('#' + sectionId + '-cancel');
+      if (saveBtn) saveBtn.classList.remove('hidden');
+      if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+      // update edit button state, text & add green glowing dot
+      const editBtn = sectionEl.querySelector('.edit-btn');
+      if (editBtn) {
+        editBtn.setAttribute('aria-expanded','true');
+
+        // Save original text in data attribute if not already saved
+        if (!editBtn.getAttribute('data-original-text')) {
+          editBtn.setAttribute('data-original-text', editBtn.innerHTML);
+        }
+
+        // Change text and add glowing green dot before it
+        editBtn.innerHTML = `
+          <span style="
+            display:inline-block;
+            width:8px; height:8px; 
+            margin-right:6px; 
+            border-radius:50%; 
+            background:#22c55e; 
+            box-shadow: 0 0 8px #22c55e;
+            vertical-align:middle;
+          "></span> Editing
+        `;
+      }
+    };
+
+    const closeSection = (sectionId) => {
+      const sectionEl = document.getElementById('section-' + sectionId);
+      if (!sectionEl) return;
+      sectionEl.classList.remove('editing');
+      sectionEl.querySelectorAll('input, textarea').forEach(f => f.disabled = true);
+      const saveBtn = sectionEl.querySelector('#' + sectionId + '-save');
+      const cancelBtn = sectionEl.querySelector('#' + sectionId + '-cancel');
+      if (saveBtn) saveBtn.classList.add('hidden');
+      if (cancelBtn) cancelBtn.classList.add('hidden');
+      const editBtn = sectionEl.querySelector('.edit-btn');
+      if (editBtn) {
+        editBtn.setAttribute('aria-expanded','false');
+
+        // Revert edit button text to original
+        if (editBtn.getAttribute('data-original-text')) {
+          editBtn.innerHTML = editBtn.getAttribute('data-original-text');
+        }
+      }
+    };
+
+    // attach edit buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      // Save original text immediately for all edit buttons (once)
+      if (!btn.getAttribute('data-original-text')) {
+        btn.setAttribute('data-original-text', btn.innerHTML);
+      }
+
+      btn.addEventListener('click', () => {
+        const section = btn.getAttribute('data-section');
+        const sectionEl = document.getElementById('section-' + section);
+        if (!sectionEl) return;
+
+        // if this section already editing, do nothing (or could toggle)
+        const isEditing = sectionEl.classList.contains('editing');
+        if (isEditing) return;
+
+        // open selected, close others
+        openSection(section);
+      });
+    });
+
+    // attach cancel buttons
+    const cancelIds = ['personal-cancel','emergency-cancel'];
+    cancelIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('click', () => {
+        const section = id.split('-')[0]; // 'personal' or 'emergency'
+        closeSection(section);
+      });
+    });
+
+    // disable all inputs initially (safety)
+    document.querySelectorAll('.editable-section').forEach(section => {
+      section.querySelectorAll('input, textarea').forEach(f => f.disabled = true);
+    });
+
+    // keyboard: Escape closes all editing
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.editable-section').forEach(s => {
+          s.classList.remove('editing');
+          s.querySelectorAll('input, textarea').forEach(f => f.disabled = true);
+          const save = s.querySelector('[id$="-save"]');
+          const cancel = s.querySelector('[id$="-cancel"]');
+          if (save) save.classList.add('hidden');
+          if (cancel) cancel.classList.add('hidden');
+          const editBtn = s.querySelector('.edit-btn');
+          if (editBtn && editBtn.getAttribute('data-original-text')) {
+            editBtn.innerHTML = editBtn.getAttribute('data-original-text');
+            editBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      }
+    });
+
+    // Show popup toast message if any flash messages exist
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    const toastIcon = document.getElementById('toast-icon');
+    if (toast && toastText && toastIcon) {
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            toastText.textContent = "{{ message|escapejs }}";
+
+            if ("{{ category }}" === "success") {
+              toastIcon.setAttribute("stroke", "white");
+              toastIcon.innerHTML = '<path d="M5 13l4 4L19 7" />';
+              toast.querySelector('div').classList.remove('bg-red-600');
+              toast.querySelector('div').classList.add('bg-green-600');
+            } else if ("{{ category }}" === "error") {
+              toastIcon.setAttribute("stroke", "white");
+              toastIcon.innerHTML = '<path d="M6 18L18 6M6 6l12 12" />';
+              toast.querySelector('div').classList.remove('bg-green-600');
+              toast.querySelector('div').classList.add('bg-red-600');
+            }
+
+            toast.classList.remove('opacity-0');
+            toast.classList.add('pointer-events-auto');
+
+            setTimeout(() => {
+              toast.classList.add('opacity-0');
+              toast.classList.remove('pointer-events-auto');
+            }, 3500);
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    }
+
+    // small UX: when forms submit, show minimal loader (optional)
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', () => {
+        // add spinner or disable submit button if needed
+      });
+    });
+
+  })();
+
+
+
+ // History Modal
+document.getElementById('view-history-btn').addEventListener('click', () => {
+    document.getElementById('history-modal').classList.remove('hidden');
+
+    const aadhaarNumber = "{{ user.aadhaar_number }}"; // Jinja renders actual value here
+    console.log("Aadhaar number:", aadhaarNumber); // Debug
+
+    fetch(`/api/history/${encodeURIComponent(aadhaarNumber)}`)
+      .then(res => res.json())
+      .then(data => {
+          console.log("History API response:", data); // Debug
+
+          const historyContainer = document.getElementById('history-content');
+          historyContainer.innerHTML = '';
+
+          if (!data || data.length === 0) {
+              historyContainer.innerHTML = '<p class="text-gray-500">No history available.</p>';
+          } else {
+              data.forEach(item => {
+                  const p = document.createElement('p');
+                  p.textContent = `${item.changed_at} - ${item.change_type}: ${item.description}`;
+                  historyContainer.appendChild(p);
+              });
+          }
+      })
+      .catch(err => {
+          console.error("Fetch error:", err);
+          document.getElementById('history-content').innerHTML = '<p class="text-red-500">Error loading history.</p>';
+      });
+});
+
+// History Modal Close Button
+document.getElementById('history-close').addEventListener('click', () => {
+    document.getElementById('history-modal').classList.add('hidden');
+});
+
+
+// Appointment Modal
+document.getElementById('book-appointment-btn').addEventListener('click', () => {
+    document.getElementById('appointment-modal').classList.remove('hidden');
+});
+document.getElementById('appointment-cancel').addEventListener('click', () => {
+    document.getElementById('appointment-modal').classList.add('hidden');
+});
+document.getElementById('appointment-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    fetch('/book_appointment', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'Appointment booked successfully!');
+        document.getElementById('appointment-modal').classList.add('hidden');
+        e.target.reset();
+    })
+    .catch(() => {
+        alert('Failed to book appointment.');
+    });
+});
+
+  
+</script>
+
+
+<style>
+  /* disabled inputs soft background */
+  input[disabled], textarea[disabled] {
+    background-color: #f8fafb;
+  }
+
+  /* a little stronger headings */
+  h2 { letter-spacing: -0.2px; }
+
+  /* subtle ring for highlighted cards */
+  #section-medical { box-shadow: 0 6px 18px rgba(59,130,246,0.06); }
+  #section-qr { box-shadow: 0 6px 18px rgba(20,184,166,0.06); }
+
+  /* edit button state when active (optional) */
+  .editable-section.editing .edit-btn {
+  background: linear-gradient(90deg, rgba(20,184,166,0.12), rgba(37,99,235,0.06));
+  color: #10b981; /* Tailwind's green-500 */
+  font-weight: 600; /* optional: make text bold */
+}
+</style>
+{% endblock %}

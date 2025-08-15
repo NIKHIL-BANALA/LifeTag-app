@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About LifeTag - Your Emergency Medical Information Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #6a11cb, #2575fc);
+            --secondary-gradient: linear-gradient(to right, #5a0fb8, #1f66d6);
+            --light-bg: #f8faff;
+            --dark-text: #2c3e50;
+            --light-text: #5f7c8d;
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.7;
+            position: relative; /* For back to top button */
+        }
+
+        header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            font-weight: 400; /* Made slightly bolder for visibility */
+            color: rgba(255, 255, 255, 0.9); /* Adjusted color for better contrast */
+        }
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 3rem 1.5rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--dark-text);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #2575fc;
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: var(--light-text);
+            text-align: justify;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .feature-card img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--dark-text);
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--light-text);
+        }
+
+        /* Scanner cards section */
+        .scanner-container {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+
+        .scanner-card {
+            flex: 1 1 calc(50% - 2.5rem); /* Allows cards to be side-by-side */
+            min-width: 320px; /* Ensures cards don't get too small */
+            max-width: 500px; /* Prevents cards from becoming too wide on large screens */
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .scanner-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .scanner-card img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .scanner-card h3 {
+            margin-bottom: 0.8rem;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+        }
+
+        .scanner-card p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .scanner-card a {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px; /* Pill-shaped button */
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .scanner-card a:hover {
+            background: var(--secondary-gradient);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #f0f2f7;
+            color: var(--light-text);
+            font-size: 0.95rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e0e6ef;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            display: none; /* Hidden by default */
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.8rem;
+            line-height: 50px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            background: #2575fc;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .feature-grid, .scanner-container {
+                grid-template-columns: 1fr;
+            }
+
+            .scanner-card {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+            }
+
+            .back-to-top {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+                line-height: 40px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="text-align:left;">
+  <a href="javascript:history.back()" style="text-decoration:none; display:inline-block;">
+    <button style="background-color:#4CAF50; color:white; border:none; padding:10px 20px; font-size:16px; border-radius:5px; cursor:pointer;">
+      ← Go Back
+    </button>
+  </a>
+</div>
+
+
+
+        <h1>LifeTag: Your Life, Securely Tagged.</h1>
+        <p style="text-align: center;">Instant Access to Vital Medical Information When It Matters Most.</p>
+    </header>
+
+    <main>
+        <section>
+            <h2 class="section-title">What is LifeTag?</h2>
+            <p>
+                LifeTag is an innovative, secure, and user-friendly platform designed to revolutionize how we access and manage
+                emergency medical information. In critical situations, every second counts. LifeTag ensures that vital health
+                data is immediately available to first responders and medical professionals, bridging the information gap
+                and potentially saving lives.
+            </p>
+            <p>
+                Our system goes beyond simple data storage; it creates a dynamic link between individuals and their crucial
+                medical history, accessible through a quick QR code scan. This allows for informed decisions, faster treatment,
+                and better patient outcomes during emergencies.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="section-title">Core Features and How It Works</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <img src="https://img.icons8.com/ios-filled/100/000000/add-user-male.png" alt="User Login Icon">
+                    <h3>Personalized User Accounts</h3>
+                    <p>Users can easily create Aadhaar based secure accounts to manage their profiles, ensuring privacy and control over their data.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://static.thenounproject.com/png/emergency-contact-icon-3685689-512.png" alt="Emergency Info Icon">
+                    <h3>Comprehensive Emergency Medical Info</h3>
+                    <p>Add critical details like allergies, blood type, existing medical conditions and current medications.</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://static.thenounproject.com/png/emergency-contact-icon-6750180-512.png" alt="Personal Info Icon">
+                    <h3>Emergency Contact Details</h3>
+                    <p>Store info of contacts that you want to get notified when in any emergency. Allows anyone to contact them in case of emergency. </p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://img.icons8.com/ios-filled/100/000000/stethoscope.png" alt="Diagnostic Role Icon">
+                    <h3>Diagnostic Role-Based Access</h3>
+                    <p>Verified medical professionals gain secure, role-based access to update user medical records, ensuring accuracy and timeliness.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Secure & Role-Based QR Scanners</h2>
+            <p style="text-align: center;">
+                LifeTag employs a dual-scanner system to maintain stringent security and ensure appropriate access levels.
+                This means different sets of information are revealed based on who is scanning, protecting your sensitive data.
+            </p>
+
+            <div class="scanner-container">
+                <div class="scanner-card">
+                    <img src="https://img.icons8.com/ios-filled/100/000000/qr-code.png" alt="Public QR Code Icon">
+                    <h3>General Public Scanner</h3>
+                    <p>
+                        Designed for the **general public** or first responders, this scanner provides instant access to
+                        <strong>essential, non-sensitive emergency information</strong>. This includes basic details
+                        like emergency contacts, known allergies, and critical medical conditions,
+                        without revealing private diagnostic records.
+                    </p>
+                    <a href="https://lifetag-publicscanner.onrender.com" target="_blank" rel="noopener noreferrer">Open Public Scanner</a>
+                </div>
+
+                <div class="scanner-card">
+                    <img src="https://img.icons8.com/ios-filled/100/000000/doctor-male.png" alt="Medical Representative Icon">
+                    <h3>Verified Medical Rep Scanner</h3>
+                    <p>
+                        Exclusively for **authorized medical representatives** and healthcare providers. This scanner
+                        requires secure authentication and provides access to <strong>detailed medical records</strong>,
+                        including diagnostic reports, full medical history, and treatment plans, enabling comprehensive care.
+                    </p>
+                    <a href="https://lifetag-verifiedscanner.onrender.com" target="_blank" rel="noopener noreferrer">Open Verified Scanner</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Our Mission and Vision</h2>
+            <p>
+                At LifeTag, our mission is to empower individuals with control over their emergency medical information and to equip
+                healthcare professionals with the tools they need to provide rapid, informed, and life-saving care. We envision
+                a future where medical emergencies are managed with unprecedented efficiency, where every patient's vital
+                information is just a secure scan away, reducing delays and improving outcomes significantly. We are committed
+                to continuous innovation, ensuring our platform remains at the forefront of medical information accessibility and security.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="section-title">Why LifeTag Matters</h2>
+            <p>
+                In the chaos of an emergency, seconds can define outcomes. Traditional methods of accessing medical history are often
+                slow or nonexistent, leading to critical delays in diagnosis and treatment. LifeTag addresses this by providing an
+                immediate, reliable bridge between patients and medical responders.
+            </p>
+            <p>
+                Imagine a scenario where an unconscious patient is found. With LifeTag, paramedics can quickly scan a QR code on
+                a wearable or a card, instantly gaining access to crucial information like blood type, allergies, or existing
+                conditions. This immediate insight enables them to administer the correct first aid and transport the patient
+                to the most appropriate facility without guesswork. For hospitals, verified access means a complete medical
+                history is available, streamlining admissions and treatment plans. LifeTag isn't just a convenience; it's a
+                critical tool for enhanced patient safety and efficient healthcare delivery.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 LifeTag. All rights reserved. Developed by NIKHIL BANALA | Email: <a href="mailto:nikhilb123k@gmail.com">nikhilb123k@gmail.com</a>
+    </footer>
+
+    <button class="back-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">&#8679;</button>
+
+    <script>
+        // Show/hide back to top button based on scroll position
+        window.onscroll = function() {
+            var button = document.querySelector('.back-to-top');
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                button.style.display = 'block';
+            } else {
+                button.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>

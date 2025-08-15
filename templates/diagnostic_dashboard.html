@@ -1,0 +1,142 @@
+{% extends "base_diagnostic.html" %}
+{% block title %}Dashboard — LifeTag Diagnostic{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Intro Section -->
+    <section class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg p-8 flex flex-col md:flex-row md:items-center md:justify-between text-white">
+      <div>
+        <h1 class="text-3xl font-bold mb-2">Welcome to LifeTag Diagnostic Portal</h1>
+        <p class="text-gray-200 max-w-xl">Efficiently manage appointments, verify medical records, and ensure secure updates for patients.</p>
+      </div>
+      <a href="/diagnostic/step1"
+         class="mt-6 md:mt-0 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white font-semibold shadow-md transition transform hover:-translate-y-0.5">
+        <!-- icon -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 4v16m8-8H4"/>
+        </svg>
+        Update User Medical Details
+      </a>
+    </section>
+
+    <!-- Appointments Section -->
+    <section class="bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Appointments</h2>
+        <!-- Tabs -->
+        <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
+          <button data-tab="completed" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition">Completed</button>
+          <button data-tab="active" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition">Active</button>
+          <button data-tab="upcoming" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition">Upcoming</button>
+        </div>
+      </div>
+
+      <!-- Tab Contents -->
+      <div id="tab-content" class="space-y-4">
+        <!-- Example Row -->
+        <!-- These will be replaced dynamically with server data -->
+        <div class="appointment-row bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="font-semibold text-gray-800">John Doe</p>
+            <p class="text-sm text-gray-500">Aadhaar: 1234-5678-9012</p>
+            <p class="text-sm text-gray-500">Test: Blood Test</p>
+          </div>
+          <div class="mt-3 md:mt-0 flex items-center space-x-4">
+            <span class="text-sm text-gray-600">12 Feb 2025, 10:30 AM</span>
+            <span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Completed</span>
+            <div class="flex space-x-2">
+              <button class="p-2 rounded-full hover:bg-gray-100">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24"><path d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </button>
+              <button class="p-2 rounded-full hover:bg-gray-100">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+              </button>
+              <button class="p-2 rounded-full hover:bg-gray-100">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContent = document.getElementById('tab-content');
+
+  const data = {
+    completed: [
+      {name: "John Doe", aadhaar: "1234-5678-9012", test: "Blood Test", datetime: "12 Feb 2025, 10:30 AM", status: "Completed"},
+      {name: "Jane Smith", aadhaar: "9876-5432-1098", test: "X-Ray", datetime: "10 Feb 2025, 3:00 PM", status: "Completed"}
+    ],
+    active: [
+      {name: "David Lee", aadhaar: "1111-2222-3333", test: "MRI", datetime: "Today, 11:00 AM", status: "Active"}
+    ],
+    upcoming: [
+      {name: "Emily Brown", aadhaar: "4444-5555-6666", test: "CT Scan", datetime: "15 Feb 2025, 9:00 AM", status: "Upcoming"}
+    ]
+  };
+
+  const renderRows = (type) => {
+    tabContent.innerHTML = "";
+    data[type].forEach(appt => {
+      const badgeColors = {
+        "Completed": "bg-green-100 text-green-700",
+        "Active": "bg-blue-100 text-blue-700",
+        "Upcoming": "bg-amber-100 text-amber-700"
+      };
+      const row = document.createElement('div');
+      row.className = "appointment-row bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col md:flex-row md:items-center md:justify-between";
+      row.innerHTML = `
+        <div>
+          <p class="font-semibold text-gray-800">${appt.name}</p>
+          <p class="text-sm text-gray-500">Aadhaar: ${appt.aadhaar}</p>
+          <p class="text-sm text-gray-500">Test: ${appt.test}</p>
+        </div>
+        <div class="mt-3 md:mt-0 flex items-center space-x-4">
+          <span class="text-sm text-gray-600">${appt.datetime}</span>
+          <span class="status-badge px-3 py-1 rounded-full text-xs font-semibold ${badgeColors[appt.status]}">${appt.status}</span>
+          <div class="flex space-x-2">
+            <button class="p-2 rounded-full hover:bg-gray-100">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                   viewBox="0 0 24 24"><path d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>
+            <button class="p-2 rounded-full hover:bg-gray-100">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                   viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            </button>
+            <button class="p-2 rounded-full hover:bg-gray-100">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                   viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+      tabContent.appendChild(row);
+    });
+  };
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('bg-white', 'shadow'));
+      btn.classList.add('bg-white', 'shadow');
+      renderRows(btn.dataset.tab);
+    });
+  });
+
+  // Default: Completed
+  tabBtns[0].classList.add('bg-white', 'shadow');
+  renderRows('completed');
+});
+</script>
+{% endblock %}

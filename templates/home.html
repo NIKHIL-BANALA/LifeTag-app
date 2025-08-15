@@ -1,0 +1,93 @@
+{% extends "base_public.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">
+            Your Medical Details, <span class="text-teal-600">Ready</span> When They Matter Most
+        </h1>
+        <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
+            LifeTag ensures your critical health info and emergency contacts are always one scan away — secure, fast, and lifesaving.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/universal_signup" class="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition">
+                Create Your LifeTag
+            </a>
+            <a href="/about" class="bg-white border border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition">
+                Learn More
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Why LifeTag?</h2>
+            <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
+                LifeTag is built to bridge the critical gap between emergencies and lifesaving action.
+            </p>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-3">
+            <!-- Feature 1 -->
+            <div class="bg-white border border-gray-100 p-8 rounded-xl shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M13 16h-1v-4h-1m4 0h-1m-4 4h1v-4h1m-4-4h1m4 0h1v4h-1m0-4h-1" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Instant Access</h3>
+                <p class="text-gray-600">
+                    QR code-enabled profiles mean bystanders and medics access vital info instantly.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white border border-gray-100 p-8 rounded-xl shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Secure & Verified</h3>
+                <p class="text-gray-600">
+                    Aadhaar + OTP verification at diagnostics ensures accuracy and authenticity.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white border border-gray-100 p-8 rounded-xl shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Always Up to Date</h3>
+                <p class="text-gray-600">
+                    Medical info is updated automatically after every verified health checkup.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-gray-50 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Be Prepared, Always.</h2>
+        <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
+            Sign up now to make sure your critical medical details are only one scan away.
+        </p>
+        <a href="/user/signup" class="mt-8 inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition">
+            Get Your LifeTag Today
+        </a>
+    </div>
+</section>
+
+{% endblock %}

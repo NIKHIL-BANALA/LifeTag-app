@@ -1,0 +1,75 @@
+{% extends "base_diagnostic.html" %}
+{% block title %}OTP Verification — LifeTag Diagnostic{% endblock %}
+
+{% block content %}
+<main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+  <div class="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-w-5xl w-full">
+
+    <!-- Left Profile Section -->
+    <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 items-center justify-center p-8">
+      <div class="flex flex-col items-center">
+        <div class="w-40 h-40 rounded-full bg-white flex items-center justify-center shadow-lg border-4 border-purple-200 animate-fadeIn">
+          <svg class="w-20 h-20 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+        <p class="mt-4 text-white font-semibold text-lg">OTP Verification</p>
+      </div>
+    </div>
+
+    <!-- Right Form Section -->
+    <div class="w-full md:w-1/2 p-8 md:p-12">
+      <h1 class="text-3xl font-bold text-indigo-700">Verify One-Time Password</h1>
+      <p class="text-gray-500 mt-2 mb-8">We’ve sent a 6-digit OTP to the registered email : {{email}}.</p>
+
+      {% if error %}
+      <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        <span class="text-sm">{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/diagnostic/step2" class="space-y-6">
+        <input type="hidden" name="aadhaar" value="{{ aadhaar }}">
+
+        <div>
+          <label for="otp" class="block text-sm font-medium text-gray-700 mb-1">Enter OTP</label>
+          <input type="text" name="otp" id="otp" pattern="[0-9]{6}" maxlength="6" required
+                 class="w-full rounded-lg border {% if error_message %}border-red-400{% else %}border-gray-300{% endif %} px-4 py-3 focus:outline-none focus:ring-2 {% if error_message %}focus:ring-red-200{% else %}focus:ring-indigo-200{% endif %} text-lg tracking-widest text-center font-mono">
+          <p class="text-xs text-gray-400 mt-1">The OTP will expire in 5 minutes.</p>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <a href="/diagnostic/step2" class="text-sm text-indigo-600 hover:underline">Resend OTP</a>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-indigo-700 hover:to-purple-700 transition transform hover:-translate-y-0.5">
+          Verify OTP
+        </button>
+      </form>
+
+      <div class="mt-6 text-xs text-gray-400">
+        <p>If you did not receive the email, check your spam folder or <a href="/diagnostic/step2" class="text-indigo-500 hover:underline">request another OTP</a>.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<style>
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+</style>
+{% endblock %}
