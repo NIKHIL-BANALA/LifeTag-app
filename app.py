@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request,session
 from routes.user_routes import user_bp
 from routes.diagnostic_routes import diagnostic_bp
@@ -14,7 +15,7 @@ def escapejs_filter(value):
 
 app = Flask(__name__)
 app.jinja_env.filters['escapejs'] = escapejs_filter
-app.secret_key = '1411'
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 init_mail(app)
 
 
