@@ -11,6 +11,7 @@ def login_required(role):
         return decorated_view
     return wrapper
 #------------------------
+'''
 # utils.py
 import secrets
 from flask_mail import Mail, Message
@@ -50,4 +51,54 @@ def send_otp_email(recipient_email):
     LifeTag Team
     """
     mail.send(msg)
+    return otp, expiry'''
+# utils.py
+import secrets
+from flask_mail import Mail, Message
+from datetime import datetime, timedelta
+import threading
+
+mail = Mail()
+email = os.environ.get('EMAIL')
+password = os.environ.get('MAIL_PASSWORD')
+
+def init_mail(app):
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = email
+    app.config['MAIL_PASSWORD'] = password
+    app.config['MAIL_DEFAULT_SENDER'] = ('LifeTag OTP', email)
+    mail.init_app(app)
+
+def generate_otp(length=6):
+    return ''.join(secrets.choice('0123456789') for _ in range(length))
+
+def send_async_email(app, msg):
+    """Send email in a separate thread."""
+    with app.app_context():
+        mail.send(msg)
+
+def send_otp_email(app, recipient_email):
+    """Generate OTP and send email asynchronously."""
+    otp = generate_otp()
+    expiry = datetime.now() + timedelta(minutes=5)
+    
+    msg = Message("Your LifeTag OTP", recipients=[recipient_email])
+    msg.body = f"""
+    Hello,
+
+    Your OTP for updating medical details is: {otp}
+
+    This OTP will expire in 5 minutes.
+    If you did not request this, please ignore this email.
+
+    Regards,
+    LifeTag Team
+    """
+    
+    # Send email in a background thread
+    threading.Thread(target=send_async_email, args=(app, msg)).start()
+    
     return otp, expiry
+
